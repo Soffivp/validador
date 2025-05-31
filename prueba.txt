@@ -1,0 +1,27 @@
+init [
+ cadena   var = "Hola mundo"
+ cadena   resp = ""
+ dec   num = 23.54
+ ent    numero = 234
+
+    si( var == "Hola Mundo"){
+    resp = "aceptada"
+    }contrario(){
+    resp = "fallo"
+    }
+
+    mientras(num > 5){
+    resp = "aceptada"
+    }
+
+    decir("El programa finalizo")
+    decir(resp)
+
+    numero = 4 - 6
+
+
+
+
+
+
+]
