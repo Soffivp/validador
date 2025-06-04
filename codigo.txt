@@ -1,0 +1,10 @@
+init[
+    cadena  = "Juan"
+    ent edad 25
+
+    si (edad >= 18 {
+        decir "Es mayor de edad"
+    } contrario {
+        decir "Es menor de edad"
+    }
+

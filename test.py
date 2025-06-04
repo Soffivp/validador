@@ -2,7 +2,7 @@ import re
 
 class ValidadorSimple:
     def __init__(self):
-        # Patrones de tokens propios
+        # Definimos los patrones y estructuras propios de Shoppy
         self.tokens = {
             'tipos': r'\b(cadena|ent|dec|boolean)\b',
             'control': r'\b(para|mientras|si|contrario|init|decir)\b',
@@ -15,6 +15,8 @@ class ValidadorSimple:
             'booleanos': r'\b(true|false)\b'
         }
 
+        #crea un patron con el nombre y los elementos de los tokens
+        # | hace que al conbinar los patrones puedan coincidir entre si
         self.patron_completo = '|'.join(f'(?P<{nombre}>{patron})' for nombre, patron in self.tokens.items())
         self.regex = re.compile(self.patron_completo)
         self.pila_delimitadores = []  # Mover la pila en cada interaccion
@@ -22,15 +24,20 @@ class ValidadorSimple:
     def tokenizar(self, linea):
         # obtiene los tokens
         tokens = []
+        #busca las coincidencias en las lineas de codigo
         for match in self.regex.finditer(linea):
+            #match itera los objetos y guarda el nombre del ultimo grupo
             tipo = match.lastgroup
+            #guarda el valor de los grupos
             valor = match.group()
             if tipo not in ['comentarios']:  # Ignorar comentarios para análisis
+                #Crea un diccionario con la información del token
+                #guarda el tipo de token y el valor en una lista
                 tokens.append({'tipo': tipo, 'valor': valor})
         return tokens
 
     def validar_balance(self, tokens):
-        """Verifica balance de delimitadores usando la pila de instancia"""
+        #Verifica balance de delimitadores usando la pila de instancia
         pares = {'(': ')', '[': ']', '{': '}'}
 
         for token in tokens:
@@ -40,11 +47,11 @@ class ValidadorSimple:
                     self.pila_delimitadores.append(valor)
                 elif valor in pares.values():
                     if not self.pila_delimitadores or pares[self.pila_delimitadores.pop()] != valor:
-                        return f"Delimitadores desbalanceados: {valor}"
+                        return f"Delimitadores mal emparejados: {valor}"
         return None
 
     def validar_sintaxis(self, tokens):
-        """Validaciones sintácticas básicas"""
+        #Validaciones sintácticas básicas
         errores = []
 
         for i, token in enumerate(tokens):
@@ -60,7 +67,7 @@ class ValidadorSimple:
         return errores
 
     def analizar_linea(self, linea, num_linea):
-        """Analiza una línea completa"""
+        #Analiza una línea completa
         linea_original = linea.strip()
         if not linea_original:
             return {'linea': num_linea, 'contenido': '', 'valida': True, 'tokens': [], 'errores': []}
@@ -80,7 +87,7 @@ class ValidadorSimple:
         }
 
     def procesar_archivo(self, archivo):
-        """Procesa archivo completo con validación de delimitadores global"""
+        #Procesa archivo completo con validación de delimitadores global
         try:
             with open(archivo, 'r', encoding='utf-8') as f:
                 lineas = f.readlines()
@@ -93,7 +100,7 @@ class ValidadorSimple:
 
         resultados = []
         self.pila_delimitadores = []  # Reiniciar pila para cada archivo
-        print(f"\n=== ANALIZANDO: {archivo} ===\n")
+        print(f"\n--- ANALIZANDO: {archivo} ---\n")
 
         # Primera pasada: procesar todas las líneas y tokens
         for i, linea in enumerate(lineas, 1):
@@ -121,15 +128,15 @@ class ValidadorSimple:
 
         # Verificar balance final
         if self.pila_delimitadores:
-            print(f"=== ERROR: Delimitadores sin cerrar: {', '.join(self.pila_delimitadores)} ===")
+            print(f"--- ERROR: Delimitadores sin cerrar: {', '.join(self.pila_delimitadores)} ---")
 
         return resultados
 
 def main():
     validador = ValidadorSimple()
     archivo = "prueba.txt"
-    print("=== VALIDADOR DE LENGUAJE SHOPPY ===")
-    print(f"Analizando archivo: {archivo}")
+    print("--- VALIDADOR DE LENGUAJE SHOPPY ---")
+    #print(f"Analizando archivo: {archivo}")
     resultados = validador.procesar_archivo(archivo)
 
 if __name__ == "__main__":
